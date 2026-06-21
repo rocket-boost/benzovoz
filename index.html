@@ -60,6 +60,7 @@
         tg.onEvent('mainButtonClicked', function(){
             let amount = document.getElementById('amount').value;
             tg.sendData(JSON.stringify({ "gas": selectedGas, "amount": amount }));
+            tg.close();
         });
     </script>
 </body>
