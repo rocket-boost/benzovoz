@@ -32,7 +32,7 @@
             display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
         .card:hover, .card.active { border-color: #ff4d4d; background: rgba(255,255,255,0.2); transform: scale(0.98); }
-        .card img { width: 40px; height: 40px; border-radius: 50%; }
+        .card img { width: 50px; height: 50px; object-fit: contain; }
         
         .hidden { display: none; }
         
@@ -53,19 +53,19 @@
         <h3>Выберите АЗС</h3>
         <div class="grid">
             <div class="card" onclick="selectGas('Лукойл', this)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Lukoil_Logo.svg/1200px-Lukoil_Logo.svg.png" alt="Лукойл">
+                <img src="https://cdn-icons-png.flaticon.com/512/3596/3596092.png" alt="Лукойл">
                 Лукойл
             </div>
             <div class="card" onclick="selectGas('Роснефть', this)">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/9/9f/Rosneft_logo.svg/1200px-Rosneft_logo.svg.png" alt="Роснефть">
+                <img src="https://cdn-icons-png.flaticon.com/512/3596/3596080.png" alt="Роснефть">
                 Роснефть
             </div>
             <div class="card" onclick="selectGas('Газпром', this)">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gazprom_logo.svg/1200px-Gazprom_logo.svg.png" alt="Газпром">
+                <img src="https://cdn-icons-png.flaticon.com/512/3596/3596085.png" alt="Газпром">
                 Газпром
             </div>
             <div class="card" onclick="selectGas('Татнефть', this)">
-                <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/e/e5/Tatneft_logo.svg/1200px-Tatneft_logo.svg.png" alt="Татнефть">
+                <img src="https://cdn-icons-png.flaticon.com/512/3596/3596095.png" alt="Татнефть">
                 Татнефть
             </div>
         </div>
