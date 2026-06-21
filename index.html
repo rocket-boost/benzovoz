@@ -61,15 +61,21 @@
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             document.getElementById('selectedGas').innerText = 'АЗС: ' + gas;
+            
+            // Показываем и принудительно активируем кнопку
             mb.show();
+            mb.enable();
         }
 
         tg.onEvent('mainButtonClicked', function(){
             let amount = document.getElementById('amount').value;
             // Отправляем данные в бота
             tg.sendData(JSON.stringify({ "gas": selectedGas, "amount": amount }));
-            // tg.close() убрали, так как это может прервать отправку в некоторых версиях, 
-            // Telegram сам закроет окно после обработки sendData
+            
+            // Если после этого бот не реагирует, значит проблема в том, 
+            // что Telegram требует закрытия приложения именно через tg.close() 
+            // после отправки, чтобы триггер сработал надежно.
+            tg.close();
         });
     </script>
 </body>
