@@ -40,6 +40,7 @@
 
     <script>
         let tg = window.Telegram.WebApp;
+        tg.ready();
         tg.expand();
         let selectedGas = '';
 
@@ -60,8 +61,10 @@
             // Отправляем данные в бота
             tg.sendData(JSON.stringify(data));
             
-            // Принудительно закрываем приложение
-            tg.close();
+            // Ждем 100мс перед закрытием, чтобы данные успели уйти
+            setTimeout(() => {
+                tg.close();
+            }, 100);
         }
     </script>
 </body>
