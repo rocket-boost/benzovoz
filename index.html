@@ -8,28 +8,71 @@
     <style>
         :root {
             --primary-color: #800020;
+            --bg-gradient: linear-gradient(135deg, #2d000b 0%, #800020 100%);
         }
-        body { font-family: sans-serif; background: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card { padding: 15px; border-radius: 12px; background: var(--tg-theme-secondary-bg-color); text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.3s; }
-        .card.active { border-color: var(--primary-color); background: #80002020; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-gradient); 
+            color: #fff; 
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+        }
+        .page { animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h3 { text-align: center; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .card { 
+            padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px); text-align: center; cursor: pointer; 
+            border: 2px solid rgba(255,255,255,0.1); transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .card:hover, .card.active { border-color: #ff4d4d; background: rgba(255,255,255,0.2); transform: scale(0.98); }
+        .card img { width: 40px; height: 40px; border-radius: 50%; }
+        
         .hidden { display: none; }
-        h3 { margin-bottom: 20px; color: var(--primary-color); }
-        select { width: 100%; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color); font-size: 16px; margin-top: 10px; }
+        
+        .back-btn { 
+            background: none; border: 1px solid rgba(255,255,255,0.3); color: #fff; 
+            padding: 8px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 20px;
+        }
+        
+        select { 
+            width: 100%; padding: 15px; border-radius: 15px; border: none; 
+            background: rgba(255,255,255,0.9); font-size: 16px; color: #333;
+        }
     </style>
 </head>
 <body>
-    <div id="step1">
-        <h3>Выберите АЗС:</h3>
+
+    <div id="step1" class="page">
+        <h3>Выберите АЗС</h3>
         <div class="grid">
-            <div class="card" onclick="selectGas('Лукойл', this)">Лукойл</div>
-            <div class="card" onclick="selectGas('Роснефть', this)">Роснефть</div>
-            <div class="card" onclick="selectGas('Газпром', this)">Газпром</div>
-            <div class="card" onclick="selectGas('Татнефть', this)">Татнефть</div>
+            <div class="card" onclick="selectGas('Лукойл', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Lukoil_Logo.svg/1200px-Lukoil_Logo.svg.png" alt="Лукойл">
+                Лукойл
+            </div>
+            <div class="card" onclick="selectGas('Роснефть', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/9/9f/Rosneft_logo.svg/1200px-Rosneft_logo.svg.png" alt="Роснефть">
+                Роснефть
+            </div>
+            <div class="card" onclick="selectGas('Газпром', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Gazprom_logo.svg/1200px-Gazprom_logo.svg.png" alt="Газпром">
+                Газпром
+            </div>
+            <div class="card" onclick="selectGas('Татнефть', this)">
+                <img src="https://upload.wikimedia.org/wikipedia/ru/thumb/e/e5/Tatneft_logo.svg/1200px-Tatneft_logo.svg.png" alt="Татнефть">
+                Татнефть
+            </div>
         </div>
     </div>
 
-    <div id="step2" class="hidden">
+    <div id="step2" class="page hidden">
+        <button class="back-btn" onclick="goBack()">← Назад</button>
         <h3 id="selectedGas"></h3>
         <p>Выберите номинал:</p>
         <select id="amount">
@@ -49,7 +92,6 @@
         let selectedGas = '';
         let mb = tg.MainButton;
         
-        // Настройка кнопки
         mb.setText("ПЕРЕЙТИ К ОПЛАТЕ");
         mb.setParams({color: "#800020", text_color: "#ffffff"});
 
@@ -60,21 +102,21 @@
             
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
-            document.getElementById('selectedGas').innerText = 'АЗС: ' + gas;
+            document.getElementById('selectedGas').innerText = '⛽ ' + gas;
             
-            // Показываем и принудительно активируем кнопку
             mb.show();
             mb.enable();
         }
 
+        function goBack() {
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('step2').classList.add('hidden');
+            mb.hide();
+        }
+
         tg.onEvent('mainButtonClicked', function(){
             let amount = document.getElementById('amount').value;
-            // Отправляем данные в бота
             tg.sendData(JSON.stringify({ "gas": selectedGas, "amount": amount }));
-            
-            // Если после этого бот не реагирует, значит проблема в том, 
-            // что Telegram требует закрытия приложения именно через tg.close() 
-            // после отправки, чтобы триггер сработал надежно.
             tg.close();
         });
     </script>
