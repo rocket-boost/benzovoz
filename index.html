@@ -18,10 +18,24 @@
             padding: 20px; 
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
         
-        /* Плавная анимация страниц */
+        /* Фон со звездочками */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Чтобы контент был поверх звезд */
         .page { 
+            position: relative;
+            z-index: 1;
             animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; 
             opacity: 0;
         }
@@ -32,22 +46,16 @@
         
         h3 { text-align: center; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; }
         
-        /* Горизонтальный скролл АЗС для экономии места на экране */
+        /* Сетка АЗС таблицей */
         .grid { 
-            display: flex; 
-            overflow-x: auto; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
             gap: 15px; 
             padding: 10px 5px 20px 5px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
         }
-        /* Скрытие полосы прокрутки для аккуратного вида */
-        .grid::-webkit-scrollbar { display: none; }
         
         /* Эффект матового стекла (Glassmorphism) с градиентной каймой */
         .card { 
-            flex: 0 0 140px;
-            scroll-snap-align: start;
             padding: 25px 15px; 
             border-radius: 24px; 
             background: rgba(255, 255, 255, 0.07); 
@@ -137,6 +145,9 @@
     </style>
 </head>
 <body>
+
+    <!-- Холст для летящих звездочек -->
+    <canvas id="starfield"></canvas>
 
     <div id="step1" class="page">
         <h3>Выберите АЗС</h3>
@@ -236,6 +247,66 @@
             tg.sendData(JSON.stringify({ "gas": selectedGas, "amount": amount }));
             tg.close();
         });
+
+        // --- Логика анимации случайных звездочек на фоне ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+
+        let stars = [];
+        const numStars = 40; // Количество маленьких звездочек
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.3, // Случайная скорость X
+                    vy: (Math.random() - 0.5) * 0.3, // Случайная скорость Y
+                    alpha: Math.random() * 0.5 + 0.3
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+
+            for (let i = 0; i < numStars; i++) {
+                let s = stars[i];
+                ctx.beginPath();
+                ctx.globalAlpha = s.alpha;
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Движение звездочек
+                s.x += s.vx;
+                s.y += s.vy;
+
+                // Если звезда улетает за край, возвращаем её с противоположной стороны
+                if (s.x < 0) s.x = canvas.width;
+                if (s.x > canvas.width) s.x = 0;
+                if (s.y < 0) s.y = canvas.height;
+                if (s.y > canvas.height) s.y = 0;
+            }
+            ctx.globalAlpha = 1.0;
+            requestAnimationFrame(drawStars);
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            initStars();
+        });
+
+        resizeCanvas();
+        initStars();
+        drawStars();
     </script>
 </body>
 </html>
